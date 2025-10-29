@@ -571,9 +571,9 @@ form button:hover {
   vertical-align: middle;
   transition: box-shadow 0.2s, border-color 0.2s;
 }
-.footer-icon.facebook   { background-image: url(fb.png); }
-.footer-icon.instagram { background-image: url(in.png)}
-.footer-icon.youtube   { background-image: url(utube.png); }
+.footer-icon.facebook   { background-image: url(assect/fb.png); }
+.footer-icon.instagram { background-image: url(assect/in.png)}
+.footer-icon.youtube   { background-image: url(assect/utube.png) }
 .footer-icon:hover {
   box-shadow: 0 0 8px #87d8f7aa;
   border-color: #070707;
