@@ -4,29 +4,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Recipe</title>
+  <title>Add Recipe | SmartCook</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/x-icon" href="assets/us.jpeg">
 </head>
 
 <body>
-  <main>
-    <section id="addrecipe" class="section">
-      <h2>Add a New Recipe</h2>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Smart<span>Cook</span></div>
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="add-recipe.html" class="active">Add Recipe</a></li>
+      <li><a href="admin.html">Admin</a></li>
+    </ul>
+  </nav>
 
+  <div class="add-recipe-container">
+    <div class="form-header">
+      <h1 class="form-title">Share Your <span>Creation</span></h1>
+      <p class="form-subtitle">Fill in the details below to add your unique recipe to our community database.</p>
+    </div>
 
-      <!-- ✅ FORM -->
-      <form id="new-recipe-form" onsubmit="handleAddRecipe(event)">
-        <input type="text" id="new-name" placeholder="Recipe Name" required />
-        <input type="text" id="new-ingredients" placeholder="Ingredients (comma separated)" required />
-        <textarea id="new-instructions" placeholder="Instructions" required></textarea>
-        <input type="text" id="new-image" placeholder="Image URL (optional)" />
-        <button type="submit">Add Recipe</button>
-        <!-- 🔙 BACK BUTTON -->
-        <button onclick="goBack()" style="margin-bottom: 20px;">⬅ Back</button>
-      </form>
-    </section>
-  </main>
+    <form id="new-recipe-form" class="modern-form" onsubmit="handleAddRecipe(event)">
+      <div class="form-group full-width">
+        <label for="new-name">Recipe Title</label>
+        <input type="text" id="new-name" class="modern-input" placeholder="e.g. Grandma's Secret Pasta" required />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="new-ingredients">Ingredients</label>
+        <input type="text" id="new-ingredients" class="modern-input"
+          placeholder="e.g. Pasta, Tomato Sauce, Garlic (comma separated)" required />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="new-instructions">Cooking Instructions</label>
+        <textarea id="new-instructions" class="modern-textarea" rows="6"
+          placeholder="Describe the steps to prepare this delicious dish..." required></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Recipe Photo</label>
+        <div class="file-upload-wrapper" onclick="document.getElementById('new-image').click()">
+          <p>Click or drag a photo here to upload</p>
+          <input type="file" id="new-image" accept="image/*" style="display: none;" onchange="previewImage(event)"
+            required />
+          <img id="image-preview" src="#" alt="Preview" />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Publish Recipe</button>
+      <button type="button" class="submit-btn" style="background: #666;" onclick="goBack()">Go Back</button>
+    </form>
+  </div>
+
   <script src="js/app.js"></script>
+  <script>
+    function previewImage(event) {
+      const preview = document.getElementById('image-preview');
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function () {
+        preview.src = reader.result;
+        preview.style.display = 'block';
+      }
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,31 +8,27 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/x-icon" href="assets/us.jpeg">
 </head>
+
 <body>
   <header>
-<nav class="navbar">
-  <div class="logo">A² Kitchen</div>
-  
-  <!-- Hamburger icon -->
-  <div class="menu-icon" onclick="toggleMenu()">
-    ☰
-  </div>
-  <!-- Navigation links -->
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#we">Home</a></li>
-    <li><a href="#home">Generate</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#team">Team</a></li>
-    <li><a href="#contact">Contact</a></li>    
-    <li><a href="add-recipe.html">Add Recipe</a></li>
-    <li><a href="admin.html">Admin</a></li>
-  </ul>
-</nav>
+    <nav class="navbar">
+      <div class="logo">Smart<span>Cook</span></div>
+      <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#we">Home</a></li>
+        <li><a href="#home">Generate</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="add-recipe.html">Add Recipe</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </nav>
 
   </header>
-<main>
+  <main>
 
-      <!-- Hero Section -->
+    <!-- Hero Section -->
     <section id="we" class="intro-banner">
       <div class="intro-content">
         <div class="intro-text">
@@ -43,118 +40,118 @@
       </div>
     </section>
 
-        <!-- Home Section -->
-        <section id="home" class="section home">
-          <div class="hero">
-            <h1>Cook Smarter, Not Harder!</h1>
-            <p>Enter ingredients you have, and get delicious recipe ideas instantly!</p>
-            <input type="text" id="ingredient-input" placeholder="e.g., tomato, cheese, pasta" />
-            <button onclick="generateRecipe()">Generate Recipe</button>
-            <button onclick="clearInputAndCollapse()">Clear</button>
-            <div id="recipe-output"></div>
-            <div style="margin-top: 20px;">
-            <button onclick="scrollToIngredients()">🔙 Back</button>
+    <!-- Home Section -->
+    <section id="home" class="section home">
+      <div class="hero">
+        <h1>Cook Smarter, Not Harder!</h1>
+        <p>Enter ingredients you have, and get delicious recipe ideas instantly!</p>
+        <input type="text" id="ingredient-input" placeholder="e.g., tomato, cheese, pasta" />
+        <button onclick="generateRecipe()">Generate Recipe</button>
+        <button onclick="clearInputAndCollapse()">Clear</button>
+        <div id="recipe-output"></div>
+        <div style="margin-top: 20px;">
+          <button onclick="scrollToIngredients()">🔙 Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+      <h2>About Us</h2>
+      <p>Welcome to A² Kitchen – your smart companion in everyday cooking! We believe great meals start with simple
+        ingredients and a dash of creativity.
+        SmartCook helps home cooks discover recipes using what’s in the kitchen. No more waste! Whether you’re a
+        beginner or an experienced home chef,
+        our tool inspires you to make the most of what you already have.We’re passionate about reducing food waste and
+        making cooking simple, fun, and stress-free.
+        From quick snacks to wholesome dinners, A² Kitchen offers personalized recipe ideas that save time, money, and
+        effort.
+        No need for fancy ingredients or complicated steps — just smart cooking with real results.Join our growing
+        community of kitchen explorers who are transforming their daily cooking into a smarter, more sustainable
+        experience.
+        With A² Kitchen, you're never stuck wondering what to cook again — you're just one click away from something
+        delicious.
+      </p>
+    </section>
+
+    <!-- Add Recipe Info Section -->
+    <section id="add-recipe" class="section add-recipe">
+      <h2>Want to share your own recipe?</h2>
+      <p>If you have delicious recipes you'd like to add, click the button below to contribute to our kitchen community!
+      </p>
+      <a href="add-recipe.html" class="btn add-recipe-btn">Add a Recipe</a>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="section team">
+      <div class="team">
+        <h1 class="our_team">Our<span>Team</span></h1>
+        <div class="team_box">
+          <div class="profile">
+            <img src="assets/MAM.jpg">
+            <div class="info">
+              <h2 class="name">Chef</h2>
+              <p class="bio">Mrs Akshatha Shetty Executive Chef</p>
             </div>
           </div>
-        </section>
-
-        <!-- About Section -->
-        <section id="about" class="section about">
-          <h2>About Us</h2>
-          <p>Welcome to A² Kitchen – your smart companion in everyday cooking! We believe great meals start with simple ingredients and a dash of creativity. 
-            SmartCook helps home cooks discover recipes using what’s in the kitchen. No more waste! Whether you’re a beginner or an experienced home chef, 
-            our tool inspires you to make the most of what you already have.We’re passionate about reducing food waste and making cooking simple, fun, and stress-free. 
-            From quick snacks to wholesome dinners, A² Kitchen offers personalized recipe ideas that save time, money, and effort. 
-            No need for fancy ingredients or complicated steps — just smart cooking with real results.Join our growing community of kitchen explorers who are transforming their daily cooking into a smarter, more sustainable experience. 
-            With A² Kitchen, you're never stuck wondering what to cook again — you're just one click away from something delicious.
-          </p>
-        </section>
-
-        <!-- Add Recipe Info Section -->
-        <section id="add-recipe" class="section add-recipe">
-          <h2>Want to share your own recipe?</h2>
-          <p>If you have delicious recipes you'd like to add, click the button below to contribute to our kitchen community!</p>
-          <a href="add-recipe.html" class="btn add-recipe-btn">Add a Recipe</a>
-        </section>
-
-        <!-- Team Section -->
-        <section id="team" class="section team">
-        <div class="team">
-            <h1 class="our_team">Our<span>Team</span></h1>
-            <div class="team_box">
-                <div class="profile">
-                    <img src="assets/MAM.jpg">
-                    <div class="info">
-                        <h2 class="name">Chef</h2>
-                        <p class="bio">Mrs Akshatha Shetty Executive Chef</p>
-                    </div>
-                </div>
-                <div class="profile">
-                    <img src="assets/ved.jpg">
-                    <div class="info">
-                        <h2 class="name">Chef</h2>
-                        <p class="bio"> Mr Vedansh Harish Ail Sous Chef 1</p>
-                    </div>
-                </div>
-                <div class="profile">
-                    <img src="assets/amin.jpg">
-                    <div class="info">
-                        <h2 class="name">Chef</h2>
-                        <p class="bio">Miss Kshamya Amin Sous Chef 2</p>
-                
-                    </div>
-                </div>
+          <div class="profile">
+            <img src="assets/ved.jpg">
+            <div class="info">
+              <h2 class="name">Chef</h2>
+              <p class="bio"> Mr Vedansh Harish Ail Sous Chef 1</p>
             </div>
+          </div>
+          <div class="profile">
+            <img src="assets/amin.jpg">
+            <div class="info">
+              <h2 class="name">Chef</h2>
+              <p class="bio">Miss Kshamya Amin Sous Chef 2</p>
+
+            </div>
+          </div>
         </div>
-        <!-- Contact Section -->
-          <section id="contact" class="section contact">
-            <h2>Contact Us</h2>
-            <form id="contact-form" onsubmit="handleContactSubmit(event)">
-              <input type="text" placeholder="Your Name" required>
-              <input type="email" placeholder="Your Email" required>
-              <textarea placeholder="Your Message" required></textarea>
-              <button type="submit">Send Message</button>
-            </form>
-          </section>
-        <!-- My Recipes (Admin View) -->
-        <section id="my-recipes-section" style="display:none;">
-          <h2>My Added Recipes (Admin View)</h2>
-          <div id="added-recipes-output"></div>
-          <button onclick="clearAllRecipes()">🧹 Clear All Recipes</button>
-          <button onclick="exportAsJSON()">⬇️ Export as JSON</button>
-          <button onclick="exportAsCSV()">⬇️ Export as CSV</button>
-          <div id="saved-recipes-list"></div>
-        </section>
+      </div>
+      <!-- Contact Section -->
+      <section id="contact" class="section contact">
+        <h2>Contact Us</h2>
+        <form id="contact-form" onsubmit="handleContactSubmit(event)">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <textarea placeholder="Your Message" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+      </section>
   </main>
-<footer class="site-footer">
-  <div class="footer-social">
-    <h2>Follow us on</h2>
-    <div class="social-icons">
-      <a href="https://facebook.com/" target="_blank" aria-label="Facebook">
-        <span class="footer-icon facebook"></span>
-      </a>
-      <a href="https://instagram.com/" target="_blank" aria-label="Instagram">
-        <span class="footer-icon instagram"></span>
-      </a>
-      <a href="https://youtube.com/" target="_blank" aria-label="YouTube">
-        <span class="footer-icon youtube"></span>
-      </a>
+  <footer class="site-footer">
+    <div class="footer-social">
+      <h2>Follow us on</h2>
+      <div class="social-icons">
+        <a href="https://facebook.com/" target="_blank" aria-label="Facebook">
+          <span class="footer-icon facebook"></span>
+        </a>
+        <a href="https://instagram.com/" target="_blank" aria-label="Instagram">
+          <span class="footer-icon instagram"></span>
+        </a>
+        <a href="https://youtube.com/" target="_blank" aria-label="YouTube">
+          <span class="footer-icon youtube"></span>
+        </a>
+      </div>
     </div>
-  </div>
-  <div class="footer-links">
-    <a>Privacy Policy</a>
-    <span class="footer-divider">|</span>
-    <a>Terms & Conditions</a>
-    <span class="footer-divider">|</span>
-    <a>Contact Us</a>
-  </div>
-  <div class="footer-copy">
+    <div class="footer-links">
+      <a>Privacy Policy</a>
+      <span class="footer-divider">|</span>
+      <a>Terms & Conditions</a>
+      <span class="footer-divider">|</span>
+      <a>Contact Us</a>
+    </div>
+    <div class="footer-copy">
       &copy; 2025 A² Kitchen All rights reserved.<br> Full Stack Project
-  </div>
-</footer>
+    </div>
+  </footer>
 
 
-<script src="js/recipes.js"></script>
-<script src="js/app.js"></script>
+  <script src="js/recipes.js"></script>
+  <script src="js/app.js"></script>
 </body>
+
 </html>

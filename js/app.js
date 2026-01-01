@@ -1,3 +1,6 @@
+const API_URL = 'api/recipes.php';
+const SPOONACULAR_API_KEY = '1ce26b42c9434492b73ab1aaedf70860';
+
 async function generateRecipe() {
   const rawInput = document.getElementById('ingredient-input').value.trim();
   const output = document.getElementById('recipe-output');
@@ -8,225 +11,188 @@ async function generateRecipe() {
   }
 
   const input = rawInput.toLowerCase().split(",").map(i => i.trim()).join(',');
-  const apiKey = '1ce26b42c9434492b73ab1aaedf70860';
-  const spoonacularURL = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${input}&number=5&apiKey=${apiKey}`;
-
-  output.innerHTML = "<p>Loading recipes...</p>";
+  output.innerHTML = "<div class='loading-spinner'></div><p>Scouring the kitchen for recipes...</p>";
 
   try {
-    const response = await fetch(spoonacularURL);
-    const data = await response.json();
+    // 1. Fetch from Local Database (PHP/SQLite)
+    const dbPromise = fetch(`${API_URL}`).then(res => res.json()).catch(() => []);
 
-    if (!Array.isArray(data) || data.length === 0) {
-      output.innerHTML = "<p>No matching recipes found from Spoonacular.</p>";
-      return;
-    }
+    // 2. Fetch from Spoonacular API
+    const spoonacularURL = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${input}&number=5&apiKey=${SPOONACULAR_API_KEY}`;
+    const spoonPromise = fetch(spoonacularURL).then(res => res.json()).catch(() => []);
 
-    const detailedRecipes = await Promise.all(
-      data.map(async (recipe) => {
+    // Wait for both
+    const [dbRecipes, spoonData] = await Promise.all([dbPromise, spoonPromise]);
+
+    // 3. Filter Static Recipes (from recipes.js)
+    const staticResults = recipes.filter(r =>
+      r.ingredients.some(ing => input.split(',').includes(ing.toLowerCase()))
+    );
+
+    // Process Database Recipes to match UI format
+    const processedDbRecipes = dbRecipes.filter(r =>
+      r.ingredients.toLowerCase().includes(input.split(',')[0]) // Simple matching for now
+    ).map(r => ({
+      id: 'db-' + r.id,
+      title: r.name,
+      image: r.image_path,
+      usedIngredients: r.ingredients.split(',').map(name => ({ name })),
+      missedIngredients: [],
+      instructions: r.instructions,
+      source: 'User Contributed'
+    }));
+
+    // Get detailed info for Spoonacular recipes
+    const detailedSpoonRecipes = await Promise.all(
+      spoonData.map(async (recipe) => {
         let instructions = "No instructions available.";
-
         try {
-          const infoRes = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${apiKey}`);
+          const infoRes = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?apiKey=${SPOONACULAR_API_KEY}`);
           const info = await infoRes.json();
-
-          if (
-            info.analyzedInstructions &&
-            info.analyzedInstructions.length > 0 &&
-            info.analyzedInstructions[0].steps &&
-            info.analyzedInstructions[0].steps.length > 0
-          ) {
-            instructions = info.analyzedInstructions[0].steps.map(
-              (step, i) => `${i + 1}. ${step.step}`
-            ).join("<br>");
-          } else if (info.instructions) {
-            instructions = info.instructions;
-          }
-        } catch (err) {
-          console.warn(`Could not load instructions for recipe ID ${recipe.id}:`, err);
-          instructions = "Failed to load instructions.";
-        }
-
-        return {
-          ...recipe,
-          instructions
-        };
+          instructions = info.instructions || (info.analyzedInstructions?.[0]?.steps?.map((s, i) => `${i + 1}. ${s.step}`).join("<br>") || instructions);
+        } catch (err) { console.warn(err); }
+        return { ...recipe, instructions, source: 'Spoonacular' };
       })
     );
 
-    output.innerHTML = detailedRecipes.map(recipe => `
-      <div class="recipe-card" onclick="expandCard(this)">
-        <img src="${recipe.image}" alt="${recipe.title}" />
-        <h3>${recipe.title}</h3>
-        <div class="recipe-details" style="display:none;">
-          <p><strong>Used Ingredients:</strong> ${recipe.usedIngredients.map(i => i.name).join(", ")}</p>
-          <p><strong>Missed Ingredients:</strong> ${recipe.missedIngredients.map(i => i.name).join(", ")}</p>
-          <p><strong>Instructions:</strong><br>${recipe.instructions}</p>
-        </div>
-      </div>
-    `).join("");
+    // Merge all results
+    const allResults = [
+      ...staticResults.map(r => ({ ...r, title: r.name, source: 'Local' })),
+      ...processedDbRecipes,
+      ...detailedSpoonRecipes
+    ];
+
+    if (allResults.length === 0) {
+      output.innerHTML = "<p>No matching recipes found. Try different ingredients!</p>";
+      return;
+    }
+
+    output.innerHTML = allResults.map(recipe => `
+            <div class="recipe-card" onclick="expandCard(this)">
+                <div class="recipe-badge">${recipe.source}</div>
+                <img src="${recipe.image}" alt="${recipe.title}" loading="lazy" />
+                <h3>${recipe.title}</h3>
+                <div class="recipe-details" style="display:none;">
+                    <p><strong>Ingredients:</strong> ${recipe.ingredients ? (Array.isArray(recipe.ingredients) ? recipe.ingredients.join(", ") : recipe.ingredients) : (recipe.usedIngredients?.map(i => i.name).join(", "))}</p>
+                    <p><strong>Instructions:</strong><br>${recipe.instructions}</p>
+                </div>
+            </div>
+        `).join("");
 
   } catch (error) {
-    console.error("Error fetching from Spoonacular:", error);
+    console.error("Error generating recipes:", error);
     output.innerHTML = "<p>⚠️ Failed to fetch recipes. Please try again later.</p>";
   }
 }
 
-function clearInputAndCollapse() {
-  // Clear input field
-  document.getElementById("ingredient-input").value = "";
+// Add Recipe Logic
+async function handleAddRecipe(event) {
+  event.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerText = "Publishing...";
 
-  // Collapse any expanded recipe card
-  const allCards = document.querySelectorAll(".recipe-card");
-  allCards.forEach(card => {
-    card.classList.remove("expanded");
-    card.style.display = "block";
-    const details = card.querySelector(".recipe-details");
-    if (details) details.style.display = "none";
-  });
+  const formData = new FormData();
+  formData.append('name', document.getElementById('new-name').value);
+  formData.append('ingredients', document.getElementById('new-ingredients').value);
+  formData.append('instructions', document.getElementById('new-instructions').value);
+  formData.append('image', document.getElementById('new-image').files[0]);
 
-  // Optional: clear the recipe output
-  document.getElementById("recipe-output").innerHTML = "";
-}
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
 
-function scrollToIngredients() {
-  const allCards = document.querySelectorAll(".recipe-card");
-
-  allCards.forEach(card => {
-    card.classList.remove("expanded");
-    card.style.display = "block";
-    const details = card.querySelector(".recipe-details");
-    if (details) details.style.display = "none";
-  });
-
-  // Optional: Scroll smoothly to the top of the recipe list
-  const recipeOutput = document.getElementById("recipe-output");
-  if (recipeOutput) {
-    recipeOutput.scrollIntoView({ behavior: "smooth" });
+    if (result.status === 'success') {
+      alert('✅ Recipe added to the community database!');
+      window.location.href = 'index.html';
+    } else {
+      alert('❌ Error: ' + result.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('❌ Network error. Is the PHP server running?');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "Publish Recipe";
   }
 }
 
+// Admin Logic
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "admin123";
 
+function adminLogin() {
+  const user = document.getElementById('login-username').value;
+  const pass = document.getElementById('login-password').value;
+
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    document.getElementById('admin-login-container').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'flex';
+    loadAdminDashboard();
+  } else {
+    document.getElementById('login-status').innerText = "Incorrect credentials.";
+  }
+}
+
+async function loadAdminDashboard() {
+  try {
+    const response = await fetch(API_URL);
+    const recipes = await response.json();
+
+    const list = document.getElementById('admin-recipe-list');
+    document.getElementById('stats-total-recipes').innerText = recipes.length;
+
+    list.innerHTML = recipes.map(r => `
+            <tr>
+                <td><img src="${r.image_path}" style="width: 50px; height: 50px; border-radius: 5px; object-fit: cover;"></td>
+                <td style="font-weight: 600;">${r.name}</td>
+                <td style="color: #666; font-size: 0.9rem;">${r.ingredients}</td>
+                <td>
+                    <button class="delete-btn" onclick="deleteRecipe(${r.id})">Delete</button>
+                </td>
+            </tr>
+        `).join("");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function deleteRecipe(id) {
+  if (!confirm('Are you sure you want to delete this recipe?')) return;
+
+  try {
+    const response = await fetch(`${API_URL}?id=${id}`, {
+      method: 'DELETE'
+    });
+    const result = await response.json();
+    if (result.status === 'success') {
+      loadAdminDashboard();
+    } else {
+      alert('Error deleting recipe');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Common Utilities
 function toggleMenu() {
   const nav = document.getElementById("nav-links");
   nav.classList.toggle("active");
 }
-function handleContactSubmit(event) {
-  event.preventDefault(); // prevent the default form submission
-  alert("Thank you! Your message has been sent.");
-  document.getElementById("contact-form").reset(); // optional: clear form fields
-}    // ✅ Declare recipes array
-    const recipes = [];
 
-    function handleAddRecipe(event) {
-      event.preventDefault();
-
-      const name = document.getElementById("new-name").value.trim();
-      const ingredients = document.getElementById("new-ingredients").value.trim().toLowerCase().split(",");
-      const instructions = document.getElementById("new-instructions").value.trim();
-      const image = document.getElementById("new-image").value.trim();
-
-      const newRecipe = {
-        name,
-        ingredients: ingredients.map(i => i.trim()),
-        instructions,
-        image
-      };
-
-      recipes.push(newRecipe); // ✅ Now works
-      saveRecipeToLocal(name, newRecipe.ingredients, instructions, image);
-      alert("✅ Recipe added successfully!");
-      document.getElementById("new-recipe-form").reset();
-    }
-
-    function saveRecipeToLocal(name, ingredients, instructions, image) {
-      const existing = JSON.parse(localStorage.getItem("myAddedRecipes") || "[]");
-      existing.push({ name, ingredients, instructions, image });
-      localStorage.setItem("myAddedRecipes", JSON.stringify(existing));
-    }
-
-    // 🔙 Go back to previous page
-    function goBack() {
-      window.history.back();
-    }
-const adminUsername = "admin";
-const adminPassword = "admin123";
-
-function adminLogin() {
-  const username = document.getElementById("login-username").value;
-  const password = document.getElementById("login-password").value;
-
-  if (username === adminUsername && password === adminPassword) {
-    document.getElementById("admin-login").style.display = "none";
-    document.getElementById("my-recipes-section").style.display = "block";
-    showAllMyRecipes();
-  } else {
-    document.getElementById("login-status").innerText = "Invalid credentials.";
-  }
+function goBack() {
+  window.history.back();
 }
-
-function showAllMyRecipes() {
-  const container = document.getElementById("added-recipes-output");
-  const saved = JSON.parse(localStorage.getItem("myAddedRecipes") || "[]");
-
-  container.innerHTML = saved.length
-    ? saved.map(r => `
-        <div class="recipe-card">
-          <h3>${r.name}</h3>
-          <p><strong>Ingredients:</strong> ${r.ingredients.join(", ")}</p>
-          <p><strong>Instructions:</strong> ${r.instructions}</p>
-        </div>
-      `).join("")
-    : "<p>No recipes added yet.</p>";
-}
-
-function exportAsJSON() {
-  const data = localStorage.getItem("myAddedRecipes") || "[]";
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url, "my_recipes.json");
-}
-
-function exportAsCSV() {
-  const data = JSON.parse(localStorage.getItem("myAddedRecipes") || "[]");
-  if (data.length === 0) return;
-
-  const headers = Object.keys(data[0]);
-  const csv = [
-    headers.join(","),
-    ...data.map(r => headers.map(h => `"${Array.isArray(r[h]) ? r[h].join(";") : r[h]}"`).join(","))
-  ].join("\n");
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url, "my_recipes.csv");
-}
-
-function triggerDownload(url, filename) {
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function clearAllRecipes() {
-  const confirmClear = confirm("Are you sure you want to delete all added recipes?");
-  if (confirmClear) {
-    localStorage.removeItem("myAddedRecipes");
-    document.getElementById("added-recipes-output").innerHTML = "<p>No recipes added yet.</p>";
-    alert("All saved recipes cleared.");
-  }
-}
-
-// ===== Expand-on-Click for Recipe Cards =====
 
 function expandCard(card) {
   const isExpanded = card.classList.contains("expanded");
   const allCards = document.querySelectorAll(".recipe-card");
 
   if (!isExpanded) {
-    // Hide all other cards
     allCards.forEach(c => {
       if (c !== card) {
         c.style.display = "none";
@@ -237,7 +203,6 @@ function expandCard(card) {
       }
     });
   } else {
-    // Collapse and show all again
     allCards.forEach(c => {
       c.classList.remove("expanded");
       c.style.display = "block";
