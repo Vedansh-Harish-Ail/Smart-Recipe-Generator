@@ -2,7 +2,7 @@ const recipes = [
   {
     name: "Tomato Omelette",
     ingredients: ["egg", "tomato", "salt", "pepper"],
-    image: "IMG_20250710_214451.jpg",
+    image: "assets/IMG_20250710_214451.jpg",
     steps: [
       "Crack 2 eggs into a mixing bowl.",
       "Finely chop 1 tomato and add it to the eggs.",
@@ -17,7 +17,7 @@ const recipes = [
   {
     name: "Simple Maggi",
     ingredients: ["maggi", "water", "masala"],
-    image:"maggi.jpg",
+    image: "https://images.unsplash.com/photo-1612927601601-663840275991?q=80&w=400&h=300&auto=format&fit=crop",
     steps: [
       "Bring 1.5 cups of water to a boil in a saucepan.",
       "Add the Maggi noodles and the tastemaker masala.",
@@ -360,7 +360,7 @@ const recipes = [
       "Garnish with coriander and serve hot."
     ]
   },
-    {
+  {
     name: "Rice Kheer",
     ingredients: ["rice", "milk", "sugar", "cardamom"],
     steps: [
@@ -477,7 +477,7 @@ const recipes = [
       "Skewer or place in a greased tray, grill or pan-sear till edges are charred.",
       "Serve hot with mint chutney."
     ]
-  },  {
+  }, {
     name: "Bhindi Fry",
     ingredients: ["bhindi", "onion", "spices"],
     steps: [

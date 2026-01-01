@@ -20,7 +20,7 @@ body {
 .intro-banner {
   width: 100%;
   height: 100vh;
-  background: url('IMG_20250710_214509.jpg') no-repeat center center/cover;
+  background: url('../assets/IMG_20250710_214509.jpg') no-repeat center center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -386,7 +386,8 @@ section {
     width: 100%;
     height: auto;
     padding: 40px 0;
-    background-image: url(image/bg1.jpg);
+    /* background-image: url(image/bg1.jpg); */
+    background-color: #f2f0d8; /* Fallback */
     background-size: cover;
     background-position: center;
 }
@@ -571,9 +572,9 @@ form button:hover {
   vertical-align: middle;
   transition: box-shadow 0.2s, border-color 0.2s;
 }
-.footer-icon.facebook   { background-image: url(assect/fb.png); }
-.footer-icon.instagram { background-image: url(assect/in.png)}
-.footer-icon.youtube   { background-image: url(assect/utube.png) }
+.footer-icon.facebook   { background-image: url(../assets/fb.png); }
+.footer-icon.instagram { background-image: url(../assets/in.png)}
+.footer-icon.youtube   { background-image: url(../assets/utube.png) }
 .footer-icon:hover {
   box-shadow: 0 0 8px #87d8f7aa;
   border-color: #070707;
